@@ -1,4 +1,32 @@
-const OPTIONS = ["stone", "paper", "scissor"]
+const OPTIONS = ["rock", "paper", "scissor"]
+
+let playerVictory = 0;
+let computerVictory = 0;
+
+function checkGameWinner() {
+    if (computerVictory === 5) 
+        console.log("You Lose the Game!");
+    if (playerVictory === 5)
+        console.log("You Won the Game!");
+}
+
+function checkRoundWinner(winner) {
+    if (winner === 1) {
+        console.log("You Won the Round!");
+        playerVictory++;
+        checkGameWinner();
+    }
+    else if (winner === 0) {
+        console.log("You Lose the Round!");
+        computerVictory++;
+        checkGameWinner();
+    }
+    else
+        console.log("It is a Draw Round!");
+
+    console.log(`Player Rounds: ${playerVictory}| Computer Rounds: ${computerVictory}`);
+    console.log("--------------------------");
+}
 
 function getComputerChoice() {
     let rng = Math.random();
@@ -6,80 +34,43 @@ function getComputerChoice() {
     return OPTIONS[randomNumber];
 } 
 
-function getPlayerChoice() {
-    let play = prompt("Do your play: [ROCK | PAPER | SCISSOR]?");
-    
-    play = play.toLowerCase();
-
-    while (!OPTIONS.includes(play)) {
-        console.log(`Invalid option ${play}.`);
-        let play = prompt("Do your play: [ROCK | PAPER | SCISSOR]?");
-        play = play.toLowerCase();
-    }
-
-    return play;
-}
-
-function playRound(playerSelection, computerSelection) {
+function playRound(playerSelection) {
     const indexPlayer = OPTIONS.indexOf(playerSelection);
-    const indexComputer = OPTIONS.indexOf(computerSelection);
 
-    //computer won
-    if(indexComputer === indexPlayer + 1 || indexComputer === 0 && indexPlayer === 2) {
-        checkRoundWinner(0);
-        return 0;
-    }
+    computerChoice = getComputerChoice();
+    console.log(`Computer choice: ${computerChoice}`);
+    const indexComputer = OPTIONS.indexOf(computerChoice);
 
-    //player won
+    
+    // Player won
     if(indexPlayer === indexComputer + 1 || indexPlayer === 0 && indexComputer === 2) {
         checkRoundWinner(1);
         return 1;
     }
 
+    // Computer won
+    if(indexComputer === indexPlayer + 1 || indexComputer === 0 && indexPlayer === 2) {
+        checkRoundWinner(0);
+        return 0;
+    }
+
+    // Draw round
     if(indexComputer === indexPlayer) {
         checkRoundWinner(-1);
         return -1;
     }
 }
 
-function checkRoundWinner(winner) {
-    if (winner === 1) 
-        console.log("You Won the Round!");
-    else if (winner === 0)
-        console.log("You Lose the Round!");
-    else
-        console.log("It is a Draw Round!");
-}
+const btns = document.querySelectorAll('.move');
 
-function checkGameWinner(computerRounds, playerRounds) {
-    if (computerRounds > playerRounds) 
-        console.log("You Lose the Game!");
-    else if (playerRounds > computerRounds)
-        console.log("You Won the Game!");
-    else 
-        console.log("It is a Draw Game!");
-}
+btns.forEach(button => {
+    button.addEventListener("click", () => {
+        const text = button.innerText.toLowerCase();
+        console.log(`Player choice: ${text}`);
+        playRound(text);
+    })
+})
 
-function playGame() {
-
-    let playerRounds = 0;
-    let computerRounds = 0;
-
-    for(let i = 0; i < 5; i++) {
-        console.log(`Starting the round ${i+1}`);
-
-        let playerSelection = getPlayerChoice();
-        let computerSelection = getComputerChoice();
-
-        let roundWinner = playRound(playerSelection, computerSelection);
-
-        if (roundWinner === 0)
-            computerRounds++;
-        else
-            playerRounds++;
-    }
-
-    checkGameWinner(computerRounds, playerRounds);
-}
-
-playGame()
+// To remove:
+// function getPlayerChoice()
+// function playGame()
